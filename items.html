@@ -85,6 +85,18 @@
         if(data[row][0] == 'reliability1') { // If Program is the program we are interested in
             var intro = data[row][1]; // Save the Intro
             var intropre = data[row - 1][1]; // Save the Intro of the item before
+            if(data[row][6].indexOf("->") > -1) { // If it has a range delimited by ->
+              var rangeParts = data[row][6].split('->'); // then split to get beginning and end
+              var rangeStart = rangeParts[0] ;
+              var rangeEnd = rangeParts[1];
+             var range = [];
+             for (var i = rangeStart; i <= rangeEnd; i++) {
+                  range.push(i);
+             }; 
+            }
+// FIX! IF DATA NOT IN A RANGE!
+            // get range length
+            percentTable = 100 / parseInt(range.length);
             if(intro !== intropre) { // If the intro is different than the previous intro
                 html += '<p><b>' + data[row][1] + '</b></p>'; // then write it into html
             }
@@ -92,21 +104,19 @@
             html += '<table><tbody><tr>'; // write the start of the table
             var scaleAnchors = data[row][3].split(";");
             for(var anchor in scaleAnchors) { // write each table row data for scale anchors
-// FIX! NEED TO GET THE ACCURATE percentage!
-                html += '<td width="16.667%" class="LabelContatiner ">' +
+                html += '<td width="'+
+                percentTable +
+                '%" class="LabelContatiner ">' +
                         '<span class="LabelWrapper">' +
                         '<label class="SingleAnswer">' +
                         scaleAnchors[anchor] + 
                         '</label></span></td>';
             }
-            html += '</tr><tr>'; // start a new table row
-// FIX! NEED TO GET THE ACCURATE RANGE!
-            var range = [];
-            for (var i = 1; i <= 6; i++) {
-                 range.push(i);
-            };
+            html += '</tr><tr>'; // start a new table row            
             for(var ans in range){
-                html += '<td width="16.667%" class="ControlContainer"><input choiceid="' +
+                html += '<td width="' +
+                percentTable +
+                '%" class="ControlContainer"><input choiceid="' +
                 ans +
                 '" type="radio" name="temp" id="temp" value="temp">' +
                 '</td>';
