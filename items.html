@@ -89,8 +89,7 @@ h3 { text-align: center }
       var data = $.csv.toArrays(csv);
       var html = '';
     for(var row in data) {
-// FIX! NEED TO GREP THE PROGRAM NAME!
-        if(data[row][0] == 'reliability1') { // If Program is the program we are interested in
+        if(data[row][0].indexOf("reliability1") > -1) { // If this row has the program of interest
             var intro = data[row][1]; // Save the Intro
             var intropre = data[row - 1][1]; // Save the Intro of the item before
             if(data[row][6].indexOf("->") > -1) { // If it has a range delimited by ->
@@ -108,11 +107,11 @@ h3 { text-align: center }
             if(intro !== intropre) { // If the intro is different than the previous intro
                 html += '<h3>' + data[row][4];
                 if(data[row][10] != "") {
-                  html += ' ( ' + data[row][10] + ')';
+                  html += ' ( ' + data[row][10] + ' )';
                 }
-                html += '</h3><p><b>' + data[row][1] + '</b></p>'; // then write it into html
+                html += '</h3><p><b><i>' + data[row][1] + '</i></b></p>'; // then write it into html
             }
-            html += '<p>' + data[row][2] + '</p>'; // write the item questions
+            html += '<p><b>' + data[row][2] + '</b></p>'; // write the item questions
             html += '<table><tbody><tr>'; // write the start of the table
             var scaleAnchors = data[row][3].split(";");
             for(var anchor in scaleAnchors) { // write each table row data for scale anchors
@@ -130,7 +129,8 @@ h3 { text-align: center }
                 percentTable +
                 '%" class="ControlContainer"><input choiceid="' +
                 ans +
-                '" type="radio" name="temp" id="temp" value="temp">' +
+                '" type="radio" name="' + data[row][5] +
+                '" id="temp" value="temp">' +
                 '</td>';
             }
             html += '</tr></tbody></table>'; // write the end of the table
@@ -146,6 +146,8 @@ h3 { text-align: center }
       $('#contents').html(html);
     };
     reader.onerror = function(){ alert('Unable to read ' + file.fileName); };
+    $("#inputs").hide(); // Hide the file choose
+    $("#list").hide(); // Hide the other file information
   }
 
 </script>
