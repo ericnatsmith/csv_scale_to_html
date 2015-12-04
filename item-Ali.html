@@ -90,9 +90,12 @@ h3 { text-align: center }
       var data = $.csv.toArrays(csv);
       var html = '';
     for(var row in data) {
-        if(data[row][0].indexOf("reliability150417") > -1) { // If this row has the program of interest
+        if(data[row][0].indexOf("seals") > -1) { // If this row has the program of interest
             var intro = data[row][1]; // Save the Intro
             var intropre = data[row - 1][1]; // Save the Intro of the item before
+            var scalenow = data[row][4]; // Save the Intro
+            var scalepre = data[row - 1][4]; // Save the Intro of the item before
+
             if(data[row][6].indexOf("->") > -1) { // If it has a range delimited by ->
               var rangeParts = data[row][6].split('->'); // then split to get beginning and end
               var rangeStart = rangeParts[0] ;
@@ -105,36 +108,47 @@ h3 { text-align: center }
 // FIX! IF DATA NOT IN A RANGE!
             // get range length
             percentTable = 100 / parseInt(range.length);
-            if(intro !== intropre) { // If the intro is different than the previous intro
+            var scaleAnchors = data[row][3].split(";");
+            if(scalenow !== scalepre) { // If the intro is different than the previous intro
                 html += '<h3>' + data[row][4];
                 if(data[row][10] != "") {
-                  html += ' ( ' + data[row][10] + ' )';
+                  html += ' ( ' + data[row][10] + ' )'; // add any notes
                 }
-                html += '</h3><p><b><i>' + data[row][1] + '</i></b></p>'; // then write it into html
+                html += '</h3>'
+                if(data[row][1] != "NA") {
+                  html += '<p><b><i>' + data[row][1] + '</i></b></p>'; // then write it into html
+                }
+                
+
             }
             html += '<p><b>' + data[row][2] + '</b></p>'; // write the item questions
-            html += '<table><tbody><tr>'; // write the start of the table
-            var scaleAnchors = data[row][3].split(";");
-            for(var anchor in scaleAnchors) { // write each table row data for scale anchors
-                html += '<td width="'+
-                percentTable +
-                '%" class="LabelContatiner ">' +
-                        '<span class="LabelWrapper">' +
-                        '<label class="radio inline control-label">' +
-                        scaleAnchors[anchor] + 
-                        '</label></span></td>';
-            }
-            html += '</tr><tr>'; // start a new table row            
-            for(var ans in range){
-                html += '<td width="' +
-                percentTable +
-                '%" class="ControlContainer"><input choiceid="' +
-                ans +
-                '" type="radio" name="' + data[row][5] +
-                '" id="temp" value="temp">' +
-                '</td>';
-            }
-            html += '</tr></tbody></table>'; // write the end of the table
+
+            if(data[row][3] != 'open'){// IF not an open response question
+              html += '<table width="100%" style="margin: 0px;"><tbody><tr>'; // write the start of the table
+                for(var anchor in scaleAnchors) { // write each table row data for scale anchors
+                  html += '<td width="'+
+                  percentTable +
+                  '%" class="LabelContatiner ">' +
+                          '<span class="LabelWrapper">' +
+                          '<label class="radio inline control-label">' +
+                          scaleAnchors[anchor] + 
+                          '</label></span></td>';
+                }
+                html += '</tr><tr>';
+                for(var ans in range){
+                    html += '<td width="' +
+                    percentTable +
+                    '%" class="ControlContainer"><input choiceid="' +
+                    ans +
+                    '" type="radio" name="' + data[row][5] +
+                    '" id="temp" value="temp">' +
+                    '</td>';
+                }
+                html += '</tr></tbody></table>'; // write the end of the table
+              } else {
+                html += '<textarea rows="9" cols="100"></textarea>';
+              }
+            
         }
       }
       //for(var row in data) {
